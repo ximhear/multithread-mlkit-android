@@ -1,0 +1,607 @@
+package com.ahnlab.path;
+
+import android.Manifest;
+import android.content.ContentResolver;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.text.FirebaseVisionText;
+import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.*;
+import io.reactivex.functions.*;
+import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.PublishSubject;
+
+
+class RecogInfo {
+	Integer index;
+	Bitmap bitmap;
+
+	RecogInfo(Integer a, Bitmap b) {
+		index = a;
+		bitmap = b;
+	}
+}
+
+
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+	public static Integer stateReady = 0;
+	public static Integer stateLoading = 1;
+
+
+	private static final String TAG = MainActivity.class.getSimpleName();
+	public static final int MY_PERMISSIONS_REQUEST = 1;
+    TextView tv;
+    ContentResolver mContentResolver;
+    Cursor mCursor;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        getPermission();
+        tv = findViewById(R.id.tv_path_list);
+        tv.setOnClickListener(this);
+
+    }
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+
+	}
+
+	private void getPermission() {
+		Log.d(TAG, "getPermission: ");
+		int accessCamera = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+		int accessStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+		List<String> listRequestPermission = new ArrayList<String>();
+
+		if (accessCamera != PackageManager.PERMISSION_GRANTED) {
+			listRequestPermission.add(Manifest.permission.CAMERA);
+		}
+		if (accessStorage != PackageManager.PERMISSION_GRANTED) {
+			listRequestPermission.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+		}
+
+
+		if (listRequestPermission.isEmpty()) {
+			// initialization();
+			// init();
+		} else {
+			String[] strRequestPermission = listRequestPermission.toArray(new String[listRequestPermission.size()]);
+			ActivityCompat.requestPermissions(this, strRequestPermission, MY_PERMISSIONS_REQUEST);
+		}
+	}
+
+
+	@Override
+    public void onClick(View v) {
+    	switch (v.getId()) {
+		    case R.id.tv_path_list:
+
+		    	dodo();
+		    	break;
+	    }
+    }
+
+    public Bitmap loadBitmap(String filePath) {
+    	long start = System.currentTimeMillis();
+		File imageFile = new File(filePath);
+		BitmapFactory.Options options = getBitmapSubSampleOptions(imageFile);
+		Bitmap bitmap = BitmapFactory.decodeFile(filePath, options);
+		Log.d("duration", filePath + " : " + (System.currentTimeMillis() - start));
+		return bitmap;
+	}
+
+	public void recogize(Bitmap bitmap) {
+
+		final long start = System.currentTimeMillis();
+		FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
+		Task<FirebaseVisionText> result =
+				detector.processImage(image)
+						.addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+							@Override
+							public void onSuccess(FirebaseVisionText firebaseVisionText) {
+								Log.d("recogizeText", firebaseVisionText.getText());
+								Log.d("duration", "" + (System.currentTimeMillis() - start));
+							}
+						})
+						.addOnFailureListener(
+								new OnFailureListener() {
+									@Override
+									public void onFailure(@NonNull Exception e) {
+									}
+								});
+	}
+
+	int fileIndex = 0;
+	FirebaseVisionTextRecognizer detector = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
+    public void dodo() {
+
+		if (mContentResolver == null) {
+			mContentResolver = getContentResolver();
+		}
+		mCursor = mContentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+				null,
+				null,
+				null,
+				null);
+
+		Log.d(TAG, "onCreate: 총 이미지 파일 갯수 : " + mCursor.getCount() + "\n");
+
+
+
+
+		final long start = System.currentTimeMillis();
+		final ArrayList<Bitmap> bitmaps = new ArrayList();
+		final BehaviorSubject<Integer> bitmapQueueState = BehaviorSubject.createDefault(0);
+
+		final ArrayList<String> filePaths = new ArrayList();
+		while (mCursor.moveToNext()) {
+			String path = mCursor.getString(mCursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA));
+			if (path.contains("DCIM")) {
+				filePaths.add(path);
+				Log.d(TAG, path);
+			}
+//			Log.d(TAG, "onCreate: 파일 경로 : " + mCursor.getString(mCursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)) + "\n");
+		}
+
+		final BehaviorSubject<Integer> loaderState0 = BehaviorSubject.createDefault(MainActivity.stateReady);
+		final PublishSubject<String> loader0 = PublishSubject.create();
+		loader0.subscribeOn(Schedulers.newThread())
+				.subscribe(new Consumer<String>() {
+					@Override
+					public void accept(String filePath) throws Exception {
+						System.out.println("onNext loader0: " + filePath);
+
+						Bitmap bitmap = loadBitmap(filePath);
+						if (bitmap != null) {
+							synchronized (bitmaps) {
+								bitmaps.add(bitmap);
+								bitmapQueueState.onNext(bitmaps.size());
+							}
+						}
+						loaderState0.onNext(MainActivity.stateReady);
+
+					}
+				}, new Consumer<Throwable>() {
+					@Override
+					public void accept(Throwable throwable) throws Exception {
+						System.out.println("onError loader0: " + Thread.currentThread());
+					}
+				}, new Action() {
+					@Override
+					public void run() throws Exception {
+						System.out.println("onCompleted loader0: " + Thread.currentThread());
+					}
+				});
+
+		final BehaviorSubject<Integer> loaderState1 = BehaviorSubject.createDefault(MainActivity.stateReady);
+		final PublishSubject<String> loader1 = PublishSubject.create();
+		loader1.subscribeOn(Schedulers.newThread())
+				.subscribe(new Consumer<String>() {
+					@Override
+					public void accept(String filePath) throws Exception {
+						System.out.println("onNext loader1 : " + filePath);
+						Bitmap bitmap = loadBitmap(filePath);
+						if (bitmap != null) {
+							synchronized (bitmaps) {
+								bitmaps.add(bitmap);
+								bitmapQueueState.onNext(bitmaps.size());
+							}
+						}
+						loaderState1.onNext(MainActivity.stateReady);
+					}
+				}, new Consumer<Throwable>() {
+					@Override
+					public void accept(Throwable throwable) throws Exception {
+						System.out.println("onError loader1: " + Thread.currentThread());
+					}
+				}, new Action() {
+					@Override
+					public void run() throws Exception {
+						System.out.println("onCompleted loader1: " + Thread.currentThread());
+					}
+				});
+
+		final BehaviorSubject<Integer> loaderState2 = BehaviorSubject.createDefault(MainActivity.stateReady);
+		final PublishSubject<String> loader2 = PublishSubject.create();
+		loader2.subscribeOn(Schedulers.newThread())
+				.subscribe(new Consumer<String>() {
+					@Override
+					public void accept(String filePath) throws Exception {
+						System.out.println("onNext loader2 : " + filePath);
+						Bitmap bitmap = loadBitmap(filePath);
+						if (bitmap != null) {
+							synchronized (bitmaps) {
+								bitmaps.add(bitmap);
+								bitmapQueueState.onNext(bitmaps.size());
+							}
+						}
+						loaderState2.onNext(MainActivity.stateReady);
+					}
+				}, new Consumer<Throwable>() {
+					@Override
+					public void accept(Throwable throwable) throws Exception {
+						System.out.println("onError loader2: " + Thread.currentThread());
+					}
+				}, new Action() {
+					@Override
+					public void run() throws Exception {
+						System.out.println("onCompleted loader2: " + Thread.currentThread());
+					}
+				});
+
+		final BehaviorSubject<Integer> loaderState3 = BehaviorSubject.createDefault(MainActivity.stateReady);
+		final PublishSubject<String> loader3 = PublishSubject.create();
+		loader3.subscribeOn(Schedulers.newThread())
+				.subscribe(new Consumer<String>() {
+					@Override
+					public void accept(String filePath) throws Exception {
+						System.out.println("onNext loader3 : " + filePath);
+						Bitmap bitmap = loadBitmap(filePath);
+						if (bitmap != null) {
+							synchronized (bitmaps) {
+								bitmaps.add(bitmap);
+								bitmapQueueState.onNext(bitmaps.size());
+							}
+						}
+						loaderState3.onNext(MainActivity.stateReady);
+					}
+				}, new Consumer<Throwable>() {
+					@Override
+					public void accept(Throwable throwable) throws Exception {
+						System.out.println("onError loader3: " + Thread.currentThread());
+					}
+				}, new Action() {
+					@Override
+					public void run() throws Exception {
+						System.out.println("onCompleted loader3: " + Thread.currentThread());
+					}
+				});
+
+		final PublishSubject<Integer> bitmapLoaderBalancer = PublishSubject.create();
+		bitmapLoaderBalancer.subscribeOn(Schedulers.newThread()).subscribe(new Consumer<Integer>() {
+			@Override
+			public void accept(Integer loaderIndex) throws Exception {
+				if (filePaths.size() <= fileIndex) {
+					return;
+				}
+				System.out.println("onNext bitmapLoaderBalancer: " + loaderIndex);
+				if (loaderIndex == 0) {
+					loaderState0.onNext(MainActivity.stateLoading);
+					loader0.onNext(filePaths.get(fileIndex));
+					fileIndex++;
+				}
+				else if (loaderIndex == 1) {
+					loaderState1.onNext(MainActivity.stateLoading);
+					loader1.onNext(filePaths.get(fileIndex));
+					fileIndex++;
+				}
+				else if (loaderIndex == 2) {
+					loaderState2.onNext(MainActivity.stateLoading);
+					loader2.onNext(filePaths.get(fileIndex));
+					fileIndex++;
+				}
+				else if (loaderIndex == 3) {
+					loaderState3.onNext(MainActivity.stateLoading);
+					loader3.onNext(filePaths.get(fileIndex));
+					fileIndex++;
+				}
+			}
+		}, new Consumer<Throwable>() {
+			@Override
+			public void accept(Throwable throwable) throws Exception {
+				System.out.println("onError bitmapLoaderBalancer: " + throwable);
+			}
+		}, new Action() {
+			@Override
+			public void run() throws Exception {
+				System.out.println("onCompleted bitmapLoaderBalancer: " + Thread.currentThread());
+			}
+		});
+
+		final BehaviorSubject<Integer> recogState0 = BehaviorSubject.createDefault(MainActivity.stateReady);
+		final PublishSubject<Bitmap> recog0 = PublishSubject.create();
+		recog0.subscribeOn(Schedulers.newThread())
+				.subscribe(new Consumer<Bitmap>() {
+					@Override
+					public void accept(Bitmap bitmap) throws Exception {
+						System.out.println("onNext recog0 : " + bitmap.getHeight());
+
+						final long start = System.currentTimeMillis();
+						FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
+						Task<FirebaseVisionText> result =
+								detector.processImage(image)
+										.addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+											@Override
+											public void onSuccess(FirebaseVisionText firebaseVisionText) {
+												Log.d("recogizeText", firebaseVisionText.getText());
+												Log.d("duration", "" + (System.currentTimeMillis() - start));
+												recogState0.onNext(MainActivity.stateReady);
+											}
+										})
+										.addOnFailureListener(
+												new OnFailureListener() {
+													@Override
+													public void onFailure(@NonNull Exception e) {
+														Log.d("recogizeText", "");
+														recogState0.onNext(MainActivity.stateReady);
+													}
+												});
+					}
+				}, new Consumer<Throwable>() {
+					@Override
+					public void accept(Throwable throwable) throws Exception {
+						System.out.println("onError recog0: " + Thread.currentThread());
+					}
+				}, new Action() {
+					@Override
+					public void run() throws Exception {
+						System.out.println("onCompleted recog0: " + Thread.currentThread());
+					}
+				});
+
+		final BehaviorSubject<Integer> recogState1 = BehaviorSubject.createDefault(MainActivity.stateReady);
+		final PublishSubject<Bitmap> recog1 = PublishSubject.create();
+		recog1.subscribeOn(Schedulers.newThread())
+				.subscribe(new Consumer<Bitmap>() {
+					@Override
+					public void accept(Bitmap bitmap) throws Exception {
+						System.out.println("onNext recog1 : " + bitmap.getHeight());
+						FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
+						Task<FirebaseVisionText> result =
+								detector.processImage(image)
+										.addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+											@Override
+											public void onSuccess(FirebaseVisionText firebaseVisionText) {
+												Log.d("recogizeText", firebaseVisionText.getText());
+												Log.d("duration", "" + (System.currentTimeMillis() - start));
+												recogState1.onNext(MainActivity.stateReady);
+											}
+										})
+										.addOnFailureListener(
+												new OnFailureListener() {
+													@Override
+													public void onFailure(@NonNull Exception e) {
+														recogState1.onNext(MainActivity.stateReady);
+													}
+												});
+					}
+				}, new Consumer<Throwable>() {
+					@Override
+					public void accept(Throwable throwable) throws Exception {
+						System.out.println("onError recog1: " + Thread.currentThread());
+					}
+				}, new Action() {
+					@Override
+					public void run() throws Exception {
+						System.out.println("onCompleted recog1: " + Thread.currentThread());
+					}
+				});
+
+		final PublishSubject<RecogInfo> recogLoaderBalancer = PublishSubject.create();
+		recogLoaderBalancer.subscribeOn(Schedulers.newThread()).subscribe(new Consumer<RecogInfo>() {
+			@Override
+			public void accept(RecogInfo info) throws Exception {
+				System.out.println("onNext recogLoaderBalancer: " + info.index);
+				if (info.index == 0) {
+					recogState0.onNext(MainActivity.stateLoading);
+					recog0.onNext(info.bitmap);
+				}
+				else if (info.index == 1) {
+					recogState1.onNext(MainActivity.stateLoading);
+					recog1.onNext(info.bitmap);
+				}
+			}
+		}, new Consumer<Throwable>() {
+			@Override
+			public void accept(Throwable throwable) throws Exception {
+				System.out.println("onError bitmapLoaderBalancer: " + throwable);
+			}
+		}, new Action() {
+			@Override
+			public void run() throws Exception {
+				System.out.println("onCompleted bitmapLoaderBalancer: " + Thread.currentThread());
+			}
+		});
+
+		Observable.combineLatest(recogState0, recogState1, bitmapQueueState, new Function3<Integer, Integer, Integer, Integer[]>() {
+
+			public Integer[] apply(Integer a, Integer b, Integer bitmapCount) throws Exception {
+
+				if (bitmapCount == 0) {
+					return new Integer[] {};
+				}
+				return new Integer[] {a, b};
+			}
+
+		})
+				.subscribeOn(Schedulers.newThread())
+				.subscribe(new Consumer<Integer[]>() {
+					@Override
+					public void accept(Integer[] states) throws Exception {
+						if (states != null && states.length == 2 && bitmaps.size() > 0) {
+							System.out.println("onNext recogStates: valid");
+							if (states[0] == MainActivity.stateReady) {
+								synchronized (bitmaps) {
+									RecogInfo a = new RecogInfo(0, bitmaps.get(0));
+									bitmaps.remove(0);
+									bitmapQueueState.onNext(bitmaps.size());
+									recogLoaderBalancer.onNext(a);
+								}
+							}
+							else if (states[1] == MainActivity.stateReady) {
+								synchronized (bitmaps) {
+									RecogInfo a = new RecogInfo(1, bitmaps.get(0));
+									bitmaps.remove(0);
+									bitmapQueueState.onNext(bitmaps.size());
+									recogLoaderBalancer.onNext(a);
+								}
+							}
+						}
+						else {
+							System.out.println("onNext recogStates: invalid");
+						}
+						Log.d("duration", "" + (System.currentTimeMillis() - start));
+					}
+				}, new Consumer<Throwable>() {
+					@Override
+					public void accept(Throwable throwable) throws Exception {
+						System.out.println("onNext recogStates: " + Thread.currentThread());
+						System.out.println(throwable);
+					}
+				}, new Action() {
+					@Override
+					public void run() throws Exception {
+						System.out.println("onCompleted recogStates: " + Thread.currentThread());
+						System.out.println("onCompleted");
+					}
+				});
+
+		Observable.combineLatest(loaderState0, loaderState1, loaderState2, loaderState3, bitmapQueueState, new Function5<Integer, Integer, Integer, Integer, Integer, Integer[]>() {
+
+			public Integer[] apply(Integer a, Integer b, Integer c, Integer d, Integer bitmapCount) throws Exception {
+
+				if (filePaths.size() <= fileIndex) {
+					return new Integer[]{};
+				}
+				if (bitmapCount < 4) {
+					return new Integer[] {a, b, c, d};
+				}
+				return new Integer[]{};
+			}
+
+		})
+				.subscribeOn(Schedulers.newThread())
+				.subscribe(new Consumer<Integer[]>() {
+					@Override
+					public void accept(Integer[] states) throws Exception {
+						if (states != null && states.length == 4) {
+							System.out.println("onNext loadStates: " + Thread.currentThread());
+							if (states[0] == MainActivity.stateReady) {
+								bitmapLoaderBalancer.onNext(0);
+							}
+							else if (states[1] == MainActivity.stateReady) {
+								bitmapLoaderBalancer.onNext(1);
+							}
+							else if (states[2] == MainActivity.stateReady) {
+								bitmapLoaderBalancer.onNext(2);
+							}
+							else if (states[3] == MainActivity.stateReady) {
+								bitmapLoaderBalancer.onNext(3);
+							}
+						}
+					}
+				}, new Consumer<Throwable>() {
+					@Override
+					public void accept(Throwable throwable) throws Exception {
+						System.out.println("onNext loadStates: " + Thread.currentThread());
+						System.out.println(throwable);
+					}
+				}, new Action() {
+					@Override
+					public void run() throws Exception {
+						System.out.println("onCompleted loadStates: " + Thread.currentThread());
+						System.out.println("onCompleted");
+					}
+				});
+
+	}
+
+	// 이미지 Resize 함수
+	private int setSimpleSize(BitmapFactory.Options options, int requestSize){
+		// 이미지 사이즈를 체크할 원본 이미지 가로/세로 사이즈를 임시 변수에 대입.
+		int originalWidth = options.outWidth;
+		int originalHeight = options.outHeight;
+//		Log.d(TAG, "originalWidth_" + originalWidth + " originalHeight_"+originalHeight);
+
+		// 원본 이미지 비율인 1로 초기화
+		int size = 1;
+
+		// 해상도가 깨지지 않을만한 요구되는 사이즈까지 2의 배수의 값으로 원본 이미지를 나눈다.
+		if (originalWidth > originalHeight) {       // 가로가 크면 가로기준으로 2씩 나누고
+			while(requestSize < originalWidth){
+				originalWidth = originalWidth / 2;
+				originalHeight = originalHeight / 2;
+
+				size = size * 2;
+			}
+		} else {                                    // 세로가 크면 세로 기준으로 2씩 나눈다.
+			while(requestSize < originalHeight){
+				originalWidth = originalWidth / 2;
+				originalHeight = originalHeight / 2;
+
+				size = size * 2;
+			}
+		}
+
+		return size;
+	}
+
+	private BitmapFactory.Options getBitmapSubSampleOptions(File imgFile) {
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		// inJustDecodeBounds = true일때 BitmapFactory.decodeResource는 리턴하지 않는다.
+		// 즉 bitmap은 반환하지않고, options 변수에만 값이 대입된다.
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
+
+//		Log.d(TAG, "before options.inSampleSize : " + options.inSampleSize);
+
+		// 이미지 사이즈를 필요한 사이즈로 적당히 줄이기위해 계산한 값을
+		// options.inSampleSize 에 2의 배수의 값으로 넣어준다.
+		options.inSampleSize = setSimpleSize(options, 1024);
+//		Log.d(TAG, "end options.inSampleSize : " + options.inSampleSize);
+
+		// options.inJustDecodeBounds 에 false 로 다시 설정해서 BitmapFactory.decodeResource의 Bitmap을 리턴받을 수 있게한다.
+		options.inJustDecodeBounds = false;
+		return options;
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode,
+	                                       @NonNull String permissions[],
+	                                       @NonNull int[] grantResults) {
+		Log.d(TAG, "onRequestPermissionsResult: ");
+		if (requestCode == MY_PERMISSIONS_REQUEST && grantResults.length > 0) {
+			for (int gr : grantResults) {
+				if (gr != PackageManager.PERMISSION_GRANTED) {
+					Toast.makeText(MainActivity.this, "사용 승인을 받지 못했습니다.",
+							Toast.LENGTH_LONG).show();
+					return;
+				}
+			}
+			// initialization();
+		} else {
+			Toast.makeText(MainActivity.this, "사용 승인을 받지 못했습니다.",
+					Toast.LENGTH_LONG).show();
+		}
+	}
+}

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "660166534217",
+    "firebase_url": "https://bitmapperformance.firebaseio.com",
+    "project_id": "bitmapperformance",
+    "storage_bucket": "bitmapperformance.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:660166534217:android:e7be31b946218504",
+        "android_client_info": {
+          "package_name": "com.ahnlab.path"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "660166534217-e15fj35ju6kiclp1tfruflb42tj02eqr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfFu_BwsAKvOcKDgDVs2pfcA_ZxhIcLnQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
