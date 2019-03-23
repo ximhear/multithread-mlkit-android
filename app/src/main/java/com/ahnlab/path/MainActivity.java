@@ -122,30 +122,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		return bitmap;
 	}
 
-	public void recogize(Bitmap bitmap) {
-
-//		final long start = System.currentTimeMillis();
-		FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
-		Task<FirebaseVisionText> result =
-				detector.processImage(image)
-						.addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
-							@Override
-							public void onSuccess(FirebaseVisionText firebaseVisionText) {
-								Log.d("recogizeText", firebaseVisionText.getText());
-//								Log.d("duration", "" + (System.currentTimeMillis() - start));
-							}
-						})
-						.addOnFailureListener(
-								new OnFailureListener() {
-									@Override
-									public void onFailure(@NonNull Exception e) {
-									}
-								});
-	}
+//	public void recogize(Bitmap bitmap) {
+//
+////		final long start = System.currentTimeMillis();
+//		FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
+//		Task<FirebaseVisionText> result =
+//				detector.processImage(image)
+//						.addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+//							@Override
+//							public void onSuccess(FirebaseVisionText firebaseVisionText) {
+//								Log.d("recogizeText", firebaseVisionText.getText());
+////								Log.d("duration", "" + (System.currentTimeMillis() - start));
+//							}
+//						})
+//						.addOnFailureListener(
+//								new OnFailureListener() {
+//									@Override
+//									public void onFailure(@NonNull Exception e) {
+//									}
+//								});
+//	}
 
 	int fileIndex = 0;
     int completedCount = 0;
-	FirebaseVisionTextRecognizer detector = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
+	FirebaseVisionTextRecognizer detector0 = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
+	FirebaseVisionTextRecognizer detector1 = detector0;//FirebaseVision.getInstance().getOnDeviceTextRecognizer();
+	FirebaseVisionTextRecognizer detector2 = detector0;//FirebaseVision.getInstance().getOnDeviceTextRecognizer();
+	FirebaseVisionTextRecognizer detector3 = detector0;//FirebaseVision.getInstance().getOnDeviceTextRecognizer();
     public void dodo() {
 
 		if (mContentResolver == null) {
@@ -298,6 +301,126 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 					}
 				});
 
+		final BehaviorSubject<Integer> loaderState4 = BehaviorSubject.createDefault(MainActivity.stateReady);
+		final PublishSubject<String> loader4 = PublishSubject.create();
+		loader4.subscribeOn(Schedulers.newThread())
+				.observeOn(Schedulers.newThread())
+				.subscribe(new Consumer<String>() {
+					@Override
+					public void accept(String filePath) throws Exception {
+//						Log.d("loader3", "onNext : " + Thread.currentThread());
+						Log.d("loader4", "onNext : " + filePath);
+						Bitmap bitmap = loadBitmap(filePath);
+						if (bitmap != null) {
+							synchronized (bitmaps) {
+								bitmaps.add(bitmap);
+								bitmapQueueState.onNext(bitmaps.size());
+							}
+						}
+						loaderState4.onNext(MainActivity.stateReady);
+					}
+				}, new Consumer<Throwable>() {
+					@Override
+					public void accept(Throwable throwable) throws Exception {
+//						Log.d("loader3", "onError : " + Thread.currentThread());
+					}
+				}, new Action() {
+					@Override
+					public void run() throws Exception {
+//						Log.d("loader3", "onCompleted : " + Thread.currentThread());
+					}
+				});
+
+		final BehaviorSubject<Integer> loaderState5 = BehaviorSubject.createDefault(MainActivity.stateReady);
+		final PublishSubject<String> loader5 = PublishSubject.create();
+		loader5.subscribeOn(Schedulers.newThread())
+				.observeOn(Schedulers.newThread())
+				.subscribe(new Consumer<String>() {
+					@Override
+					public void accept(String filePath) throws Exception {
+//						Log.d("loader3", "onNext : " + Thread.currentThread());
+						Log.d("loader5", "onNext : " + filePath);
+						Bitmap bitmap = loadBitmap(filePath);
+						if (bitmap != null) {
+							synchronized (bitmaps) {
+								bitmaps.add(bitmap);
+								bitmapQueueState.onNext(bitmaps.size());
+							}
+						}
+						loaderState5.onNext(MainActivity.stateReady);
+					}
+				}, new Consumer<Throwable>() {
+					@Override
+					public void accept(Throwable throwable) throws Exception {
+//						Log.d("loader3", "onError : " + Thread.currentThread());
+					}
+				}, new Action() {
+					@Override
+					public void run() throws Exception {
+//						Log.d("loader3", "onCompleted : " + Thread.currentThread());
+					}
+				});
+
+		final BehaviorSubject<Integer> loaderState6 = BehaviorSubject.createDefault(MainActivity.stateReady);
+		final PublishSubject<String> loader6 = PublishSubject.create();
+		loader6.subscribeOn(Schedulers.newThread())
+				.observeOn(Schedulers.newThread())
+				.subscribe(new Consumer<String>() {
+					@Override
+					public void accept(String filePath) throws Exception {
+//						Log.d("loader3", "onNext : " + Thread.currentThread());
+						Log.d("loader6", "onNext : " + filePath);
+						Bitmap bitmap = loadBitmap(filePath);
+						if (bitmap != null) {
+							synchronized (bitmaps) {
+								bitmaps.add(bitmap);
+								bitmapQueueState.onNext(bitmaps.size());
+							}
+						}
+						loaderState6.onNext(MainActivity.stateReady);
+					}
+				}, new Consumer<Throwable>() {
+					@Override
+					public void accept(Throwable throwable) throws Exception {
+//						Log.d("loader3", "onError : " + Thread.currentThread());
+					}
+				}, new Action() {
+					@Override
+					public void run() throws Exception {
+//						Log.d("loader3", "onCompleted : " + Thread.currentThread());
+					}
+				});
+
+		final BehaviorSubject<Integer> loaderState7 = BehaviorSubject.createDefault(MainActivity.stateReady);
+		final PublishSubject<String> loader7 = PublishSubject.create();
+		loader7.subscribeOn(Schedulers.newThread())
+				.observeOn(Schedulers.newThread())
+				.subscribe(new Consumer<String>() {
+					@Override
+					public void accept(String filePath) throws Exception {
+//						Log.d("loader3", "onNext : " + Thread.currentThread());
+						Log.d("loader7", "onNext : " + filePath);
+						Bitmap bitmap = loadBitmap(filePath);
+						if (bitmap != null) {
+							synchronized (bitmaps) {
+								bitmaps.add(bitmap);
+								bitmapQueueState.onNext(bitmaps.size());
+							}
+						}
+						loaderState7.onNext(MainActivity.stateReady);
+					}
+				}, new Consumer<Throwable>() {
+					@Override
+					public void accept(Throwable throwable) throws Exception {
+//						Log.d("loader3", "onError : " + Thread.currentThread());
+					}
+				}, new Action() {
+					@Override
+					public void run() throws Exception {
+//						Log.d("loader3", "onCompleted : " + Thread.currentThread());
+					}
+				});
+
 		final PublishSubject<Integer> bitmapLoaderBalancer = PublishSubject.create();
 		bitmapLoaderBalancer
 				.subscribeOn(Schedulers.newThread())
@@ -329,6 +452,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 					loader3.onNext(filePaths.get(fileIndex));
 					fileIndex++;
 				}
+				else if (loaderIndex == 4) {
+					loaderState4.onNext(MainActivity.stateLoading);
+					loader4.onNext(filePaths.get(fileIndex));
+					fileIndex++;
+				}
+				else if (loaderIndex == 5) {
+					loaderState5.onNext(MainActivity.stateLoading);
+					loader5.onNext(filePaths.get(fileIndex));
+					fileIndex++;
+				}
+				else if (loaderIndex == 6) {
+					loaderState6.onNext(MainActivity.stateLoading);
+					loader6.onNext(filePaths.get(fileIndex));
+					fileIndex++;
+				}
+				else if (loaderIndex == 7) {
+					loaderState7.onNext(MainActivity.stateLoading);
+					loader7.onNext(filePaths.get(fileIndex));
+					fileIndex++;
+				}
 			}
 		}, new Consumer<Throwable>() {
 			@Override
@@ -355,7 +498,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //						final long start = System.currentTimeMillis();
 						FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
 						Task<FirebaseVisionText> result =
-								detector.processImage(image)
+								detector0.processImage(image)
 										.addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
 											@Override
 											public void onSuccess(FirebaseVisionText firebaseVisionText) {
@@ -406,7 +549,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //						Log.d("recog1", "onNext : " + Thread.currentThread());
 						FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
 						Task<FirebaseVisionText> result =
-								detector.processImage(image)
+								detector1.processImage(image)
 										.addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
 											@Override
 											public void onSuccess(FirebaseVisionText firebaseVisionText) {
@@ -446,6 +589,108 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 					}
 				});
 
+		final BehaviorSubject<Integer> recogState2 = BehaviorSubject.createDefault(MainActivity.stateReady);
+		final PublishSubject<Bitmap> recog2 = PublishSubject.create();
+		recog2
+				.subscribeOn(Schedulers.newThread())
+				.observeOn(Schedulers.newThread())
+				.subscribe(new Consumer<Bitmap>() {
+					@Override
+					public void accept(Bitmap bitmap) throws Exception {
+//						Log.d("recog1", "onNext : " + Thread.currentThread());
+						FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
+						Task<FirebaseVisionText> result =
+								detector2.processImage(image)
+										.addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+											@Override
+											public void onSuccess(FirebaseVisionText firebaseVisionText) {
+//												Log.d("recogizeText success", "recog1 " + firebaseVisionText.getText());
+												completedCount++;
+												Log.d("duration s", "" + completedCount + " : " + (System.currentTimeMillis() - start));
+												recogState2.onNext(MainActivity.stateReady);
+											}
+										})
+										.addOnFailureListener(
+												new OnFailureListener() {
+													@Override
+													public void onFailure(@NonNull Exception e) {
+//														Log.d("recogizeText fail", "recog1 ");
+														completedCount++;
+														Log.d("duration f", "" + completedCount + " : " + (System.currentTimeMillis() - start));
+														recogState2.onNext(MainActivity.stateReady);
+													}
+												})
+										.addOnCompleteListener(new OnCompleteListener<FirebaseVisionText>() {
+											@Override
+											public void onComplete(@NonNull Task<FirebaseVisionText> task) {
+//												Log.d("recogizeText complete", "recog1 ");
+//												Log.d("duration", "" + (System.currentTimeMillis() - start));
+											}
+										});
+					}
+				}, new Consumer<Throwable>() {
+					@Override
+					public void accept(Throwable throwable) throws Exception {
+//						Log.d("recog1", "onError : " + Thread.currentThread());
+					}
+				}, new Action() {
+					@Override
+					public void run() throws Exception {
+//						Log.d("recog1", "onCompleted : " + Thread.currentThread());
+					}
+				});
+
+		final BehaviorSubject<Integer> recogState3 = BehaviorSubject.createDefault(MainActivity.stateReady);
+		final PublishSubject<Bitmap> recog3 = PublishSubject.create();
+		recog3
+				.subscribeOn(Schedulers.newThread())
+				.observeOn(Schedulers.newThread())
+				.subscribe(new Consumer<Bitmap>() {
+					@Override
+					public void accept(Bitmap bitmap) throws Exception {
+//						Log.d("recog1", "onNext : " + Thread.currentThread());
+						FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
+						Task<FirebaseVisionText> result =
+								detector3.processImage(image)
+										.addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+											@Override
+											public void onSuccess(FirebaseVisionText firebaseVisionText) {
+//												Log.d("recogizeText success", "recog1 " + firebaseVisionText.getText());
+												completedCount++;
+												Log.d("duration s", "" + completedCount + " : " + (System.currentTimeMillis() - start));
+												recogState3.onNext(MainActivity.stateReady);
+											}
+										})
+										.addOnFailureListener(
+												new OnFailureListener() {
+													@Override
+													public void onFailure(@NonNull Exception e) {
+//														Log.d("recogizeText fail", "recog1 ");
+														completedCount++;
+														Log.d("duration f", "" + completedCount + " : " + (System.currentTimeMillis() - start));
+														recogState3.onNext(MainActivity.stateReady);
+													}
+												})
+										.addOnCompleteListener(new OnCompleteListener<FirebaseVisionText>() {
+											@Override
+											public void onComplete(@NonNull Task<FirebaseVisionText> task) {
+//												Log.d("recogizeText complete", "recog1 ");
+//												Log.d("duration", "" + (System.currentTimeMillis() - start));
+											}
+										});
+					}
+				}, new Consumer<Throwable>() {
+					@Override
+					public void accept(Throwable throwable) throws Exception {
+//						Log.d("recog1", "onError : " + Thread.currentThread());
+					}
+				}, new Action() {
+					@Override
+					public void run() throws Exception {
+//						Log.d("recog1", "onCompleted : " + Thread.currentThread());
+					}
+				});
+
 		final PublishSubject<RecogInfo> recogLoaderBalancer = PublishSubject.create();
 		recogLoaderBalancer
 				.subscribeOn(Schedulers.newThread())
@@ -463,6 +708,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 					recogState1.onNext(MainActivity.stateLoading);
 					recog1.onNext(info.bitmap);
 				}
+				else if (info.index == 2) {
+					recogState2.onNext(MainActivity.stateLoading);
+					recog2.onNext(info.bitmap);
+				}
+				else if (info.index == 3) {
+					recogState3.onNext(MainActivity.stateLoading);
+					recog3.onNext(info.bitmap);
+				}
 			}
 		}, new Consumer<Throwable>() {
 			@Override
@@ -476,14 +729,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 			}
 		});
 
-		Observable.combineLatest(recogState0, recogState1, bitmapQueueState, new Function3<Integer, Integer, Integer, Integer[]>() {
+		Observable.combineLatest(recogState0, recogState1, recogState2, recogState3, bitmapQueueState, new Function5<Integer, Integer, Integer, Integer, Integer, Integer[]>() {
 
-			public Integer[] apply(Integer a, Integer b, Integer bitmapCount) throws Exception {
+			public Integer[] apply(Integer a, Integer b, Integer c, Integer d, Integer bitmapCount) throws Exception {
 
 				if (bitmapCount == 0) {
 					return new Integer[] {};
 				}
-				return new Integer[] {a, b};
+				return new Integer[] {a, b, c, d};
 			}
 
 		})
@@ -493,7 +746,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 					@Override
 					public void accept(Integer[] states) throws Exception {
 //						Log.d("combineLatest", "recog onNext : " + Thread.currentThread());
-						if (states != null && states.length == 2 && bitmaps.size() > 0) {
+						if (states != null && states.length == 4 && bitmaps.size() > 0) {
 							if (states[0] == MainActivity.stateReady) {
 								synchronized (bitmaps) {
 									RecogInfo a = new RecogInfo(0, bitmaps.get(0));
@@ -505,6 +758,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 							else if (states[1] == MainActivity.stateReady) {
 								synchronized (bitmaps) {
 									RecogInfo a = new RecogInfo(1, bitmaps.get(0));
+									bitmaps.remove(0);
+									bitmapQueueState.onNext(bitmaps.size());
+									recogLoaderBalancer.onNext(a);
+								}
+							}
+							else if (states[2] == MainActivity.stateReady) {
+								synchronized (bitmaps) {
+									RecogInfo a = new RecogInfo(2, bitmaps.get(0));
+									bitmaps.remove(0);
+									bitmapQueueState.onNext(bitmaps.size());
+									recogLoaderBalancer.onNext(a);
+								}
+							}
+							else if (states[3] == MainActivity.stateReady) {
+								synchronized (bitmaps) {
+									RecogInfo a = new RecogInfo(3, bitmaps.get(0));
 									bitmaps.remove(0);
 									bitmapQueueState.onNext(bitmaps.size());
 									recogLoaderBalancer.onNext(a);
@@ -524,16 +793,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 					}
 				});
 
-		Observable.combineLatest(loaderState0, loaderState1, loaderState2, loaderState3, bitmapQueueState, new Function5<Integer, Integer, Integer, Integer, Integer, Integer[]>() {
+		Observable.combineLatest(loaderState0, loaderState1, loaderState2, loaderState3, loaderState4, loaderState5, loaderState6, loaderState7, bitmapQueueState, new Function9<Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer[]>() {
 
-			public Integer[] apply(Integer a, Integer b, Integer c, Integer d, Integer bitmapCount) throws Exception {
+			public Integer[] apply(Integer a, Integer b, Integer c, Integer d, Integer e, Integer f, Integer g, Integer h, Integer bitmapCount) throws Exception {
 
 				if (filePaths.size() <= fileIndex) {
 //					Log.d("combineLatest", "completed");
 					return new Integer[]{};
 				}
-				if (bitmapCount < 4) {
-					return new Integer[] {a, b, c, d};
+				if (bitmapCount < 8) {
+					return new Integer[] {a, b, c, d, e, f, g, h};
 				}
 				return new Integer[]{};
 			}
@@ -545,7 +814,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 					@Override
 					public void accept(Integer[] states) throws Exception {
 //						Log.d("combineLatest", "onNext : " + Thread.currentThread());
-						if (states != null && states.length == 4) {
+						if (states != null && states.length == 8) {
 							if (states[0] == MainActivity.stateReady) {
 								bitmapLoaderBalancer.onNext(0);
 							}
@@ -557,6 +826,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 							}
 							else if (states[3] == MainActivity.stateReady) {
 								bitmapLoaderBalancer.onNext(3);
+							}
+							else if (states[4] == MainActivity.stateReady) {
+								bitmapLoaderBalancer.onNext(4);
+							}
+							else if (states[5] == MainActivity.stateReady) {
+								bitmapLoaderBalancer.onNext(5);
+							}
+							else if (states[6] == MainActivity.stateReady) {
+								bitmapLoaderBalancer.onNext(6);
+							}
+							else if (states[7] == MainActivity.stateReady) {
+								bitmapLoaderBalancer.onNext(7);
 							}
 						}
 					}
