@@ -361,7 +361,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 											public void onSuccess(FirebaseVisionText firebaseVisionText) {
 //												Log.d("recogizeText success", "recog0 " + firebaseVisionText.getText());
 												completedCount++;
-												Log.d("duration", "" + completedCount + " : " + (System.currentTimeMillis() - start));
+												Log.d("duration s", "" + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState0.onNext(MainActivity.stateReady);
 											}
 										})
@@ -371,7 +371,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 													public void onFailure(@NonNull Exception e) {
 //														Log.d("recogizeText fail", "recog0 ");
 														completedCount++;
-														Log.d("duration", "" + completedCount + " : " + (System.currentTimeMillis() - start));
+														Log.d("duration f", "" + completedCount + " : " + (System.currentTimeMillis() - start));
 														recogState0.onNext(MainActivity.stateReady);
 													}
 												})
@@ -412,7 +412,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 											public void onSuccess(FirebaseVisionText firebaseVisionText) {
 //												Log.d("recogizeText success", "recog1 " + firebaseVisionText.getText());
 												completedCount++;
-												Log.d("duration", "" + completedCount + " : " + (System.currentTimeMillis() - start));
+												Log.d("duration s", "" + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState1.onNext(MainActivity.stateReady);
 											}
 										})
@@ -422,7 +422,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 													public void onFailure(@NonNull Exception e) {
 //														Log.d("recogizeText fail", "recog1 ");
 														completedCount++;
-														Log.d("duration", "" + completedCount + " : " + (System.currentTimeMillis() - start));
+														Log.d("duration f", "" + completedCount + " : " + (System.currentTimeMillis() - start));
 														recogState1.onNext(MainActivity.stateReady);
 													}
 												})
