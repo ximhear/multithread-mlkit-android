@@ -192,6 +192,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 	int fileIndex = 0;
     int completedCount = 0;
+    int fileCount = -1;
+    String synchronizedString = "synchronizedString";
 	FirebaseVisionTextRecognizer detector = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
     public void dodo() {
 
@@ -220,8 +222,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				filePaths.add(path);
 				Log.d(TAG, path);
 			}
+//			if (filePaths.size() == 20) {
+//				break;
+//			}
 //			Log.d(TAG, "onCreate: 파일 경로 : " + mCursor.getString(mCursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)) + "\n");
 		}
+
+		fileCount = filePaths.size();
 
 		final BehaviorSubject<Integer> loaderState0 = BehaviorSubject.createDefault(MainActivity.stateReady);
 		final PublishSubject<String> loader0 = PublishSubject.create();
@@ -246,12 +253,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				}, new Consumer<Throwable>() {
 					@Override
 					public void accept(Throwable throwable) throws Exception {
-//						Log.d("loader0", "onError : " + Thread.currentThread());
+						Log.d("loader0", "onError : " + Thread.currentThread());
 					}
 				}, new Action() {
 					@Override
 					public void run() throws Exception {
-//						Log.d("loader0", "onCompleted : " + Thread.currentThread());
+						Log.d("loader0", "onCompleted : " + Thread.currentThread());
 					}
 				});
 
@@ -276,12 +283,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				}, new Consumer<Throwable>() {
 					@Override
 					public void accept(Throwable throwable) throws Exception {
-//						Log.d("loader1", "onError : " + Thread.currentThread());
+						Log.d("loader1", "onError : " + Thread.currentThread());
 					}
 				}, new Action() {
 					@Override
 					public void run() throws Exception {
-//						Log.d("loader1", "onCompleted : " + Thread.currentThread());
+						Log.d("loader1", "onCompleted : " + Thread.currentThread());
 					}
 				});
 
@@ -306,12 +313,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				}, new Consumer<Throwable>() {
 					@Override
 					public void accept(Throwable throwable) throws Exception {
-//						Log.d("loader2", "onError : " + Thread.currentThread());
+						Log.d("loader2", "onError : " + Thread.currentThread());
 					}
 				}, new Action() {
 					@Override
 					public void run() throws Exception {
-//						Log.d("loader2", "onCompleted : " + Thread.currentThread());
+						Log.d("loader2", "onCompleted : " + Thread.currentThread());
 					}
 				});
 
@@ -336,12 +343,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				}, new Consumer<Throwable>() {
 					@Override
 					public void accept(Throwable throwable) throws Exception {
-//						Log.d("loader3", "onError : " + Thread.currentThread());
+						Log.d("loader3", "onError : " + Thread.currentThread());
 					}
 				}, new Action() {
 					@Override
 					public void run() throws Exception {
-//						Log.d("loader3", "onCompleted : " + Thread.currentThread());
+						Log.d("loader3", "onCompleted : " + Thread.currentThread());
 					}
 				});
 
@@ -366,12 +373,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				}, new Consumer<Throwable>() {
 					@Override
 					public void accept(Throwable throwable) throws Exception {
-//						Log.d("loader3", "onError : " + Thread.currentThread());
+						Log.d("loader4", "onError : " + Thread.currentThread());
 					}
 				}, new Action() {
 					@Override
 					public void run() throws Exception {
-//						Log.d("loader3", "onCompleted : " + Thread.currentThread());
+						Log.d("loader4", "onCompleted : " + Thread.currentThread());
 					}
 				});
 
@@ -396,12 +403,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				}, new Consumer<Throwable>() {
 					@Override
 					public void accept(Throwable throwable) throws Exception {
-//						Log.d("loader3", "onError : " + Thread.currentThread());
+						Log.d("loader5", "onError : " + Thread.currentThread());
 					}
 				}, new Action() {
 					@Override
 					public void run() throws Exception {
-//						Log.d("loader3", "onCompleted : " + Thread.currentThread());
+						Log.d("loader5", "onCompleted : " + Thread.currentThread());
 					}
 				});
 
@@ -426,12 +433,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				}, new Consumer<Throwable>() {
 					@Override
 					public void accept(Throwable throwable) throws Exception {
-//						Log.d("loader3", "onError : " + Thread.currentThread());
+						Log.d("loader6", "onError : " + Thread.currentThread());
 					}
 				}, new Action() {
 					@Override
 					public void run() throws Exception {
-//						Log.d("loader3", "onCompleted : " + Thread.currentThread());
+						Log.d("loader6", "onCompleted : " + Thread.currentThread());
 					}
 				});
 
@@ -456,12 +463,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				}, new Consumer<Throwable>() {
 					@Override
 					public void accept(Throwable throwable) throws Exception {
-//						Log.d("loader3", "onError : " + Thread.currentThread());
+						Log.d("loader7", "onError : " + Thread.currentThread());
 					}
 				}, new Action() {
 					@Override
 					public void run() throws Exception {
-//						Log.d("loader3", "onCompleted : " + Thread.currentThread());
+						Log.d("loader7", "onCompleted : " + Thread.currentThread());
 					}
 				});
 
@@ -520,12 +527,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		}, new Consumer<Throwable>() {
 			@Override
 			public void accept(Throwable throwable) throws Exception {
-//				Log.d("bitmapLoaderBalancer", "onError : " + Thread.currentThread());
+				Log.d("bitmapLoaderBalancer", "onError : " + Thread.currentThread());
 			}
 		}, new Action() {
 			@Override
 			public void run() throws Exception {
-//				Log.d("bitmapLoaderBalancer", "onCompleted : " + Thread.currentThread());
+				Log.d("bitmapLoaderBalancer", "onCompleted : " + Thread.currentThread());
 			}
 		});
 
@@ -548,7 +555,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 											@Override
 											public void onSuccess(FirebaseVisionText firebaseVisionText) {
 //												Log.d("recogizeText success", "recog0 " + firebaseVisionText.getText());
-												completedCount++;
+												synchronized (synchronizedString) {
+													completedCount++;
+												}
 												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState0.onNext(MainActivity.stateReady);
 											}
@@ -558,7 +567,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 													@Override
 													public void onFailure(@NonNull Exception e) {
 //														Log.d("recogizeText fail", "recog0 ");
-														completedCount++;
+														synchronized (synchronizedString) {
+															completedCount++;
+														}
 														Log.d("duration f", "" + completedCount + " : " + (System.currentTimeMillis() - start));
 														recogState0.onNext(MainActivity.stateReady);
 													}
@@ -574,12 +585,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				}, new Consumer<Throwable>() {
 					@Override
 					public void accept(Throwable throwable) throws Exception {
-//						Log.d("recog0", "onError : " + Thread.currentThread());
+						Log.d("recog0", "onError : " + Thread.currentThread());
 					}
 				}, new Action() {
 					@Override
 					public void run() throws Exception {
-//						Log.d("recog0", "onCompleted : " + Thread.currentThread());
+						Log.d("recog0", "onCompleted : " + Thread.currentThread());
 					}
 				});
 
@@ -600,7 +611,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 											@Override
 											public void onSuccess(FirebaseVisionText firebaseVisionText) {
 //												Log.d("recogizeText success", "recog1 " + firebaseVisionText.getText());
-												completedCount++;
+												synchronized (synchronizedString) {
+													completedCount++;
+												}
 												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState1.onNext(MainActivity.stateReady);
 											}
@@ -610,7 +623,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 													@Override
 													public void onFailure(@NonNull Exception e) {
 //														Log.d("recogizeText fail", "recog1 ");
-														completedCount++;
+														synchronized (synchronizedString) {
+															completedCount++;
+														}
 														Log.d("duration f", "" + completedCount + " : " + (System.currentTimeMillis() - start));
 														recogState1.onNext(MainActivity.stateReady);
 													}
@@ -626,12 +641,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				}, new Consumer<Throwable>() {
 					@Override
 					public void accept(Throwable throwable) throws Exception {
-//						Log.d("recog1", "onError : " + Thread.currentThread());
+						Log.d("recog1", "onError : " + Thread.currentThread());
 					}
 				}, new Action() {
 					@Override
 					public void run() throws Exception {
-//						Log.d("recog1", "onCompleted : " + Thread.currentThread());
+						Log.d("recog1", "onCompleted : " + Thread.currentThread());
 					}
 				});
 
@@ -652,7 +667,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 											@Override
 											public void onSuccess(FirebaseVisionText firebaseVisionText) {
 //												Log.d("recogizeText success", "recog2 " + firebaseVisionText.getText());
-												completedCount++;
+												synchronized (synchronizedString) {
+													completedCount++;
+												}
 												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState2.onNext(MainActivity.stateReady);
 											}
@@ -662,7 +679,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 													@Override
 													public void onFailure(@NonNull Exception e) {
 //														Log.d("recogizeText fail", "recog1 ");
-														completedCount++;
+														synchronized (synchronizedString) {
+															completedCount++;
+														}
 														Log.d("duration f", "" + completedCount + " : " + (System.currentTimeMillis() - start));
 														recogState2.onNext(MainActivity.stateReady);
 													}
@@ -678,12 +697,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				}, new Consumer<Throwable>() {
 					@Override
 					public void accept(Throwable throwable) throws Exception {
-//						Log.d("recog1", "onError : " + Thread.currentThread());
+						Log.d("recog2", "onError : " + Thread.currentThread());
 					}
 				}, new Action() {
 					@Override
 					public void run() throws Exception {
-//						Log.d("recog1", "onCompleted : " + Thread.currentThread());
+						Log.d("recog2", "onCompleted : " + Thread.currentThread());
 					}
 				});
 
@@ -704,7 +723,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 											@Override
 											public void onSuccess(FirebaseVisionText firebaseVisionText) {
 //												Log.d("recogizeText success", "recog3 " + firebaseVisionText.getText());
-												completedCount++;
+												synchronized (synchronizedString) {
+													completedCount++;
+												}
 												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState3.onNext(MainActivity.stateReady);
 											}
@@ -714,7 +735,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 													@Override
 													public void onFailure(@NonNull Exception e) {
 //														Log.d("recogizeText fail", "recog1 ");
-														completedCount++;
+														synchronized (synchronizedString) {
+															completedCount++;
+														}
 														Log.d("duration f", "" + completedCount + " : " + (System.currentTimeMillis() - start));
 														recogState3.onNext(MainActivity.stateReady);
 													}
@@ -730,12 +753,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				}, new Consumer<Throwable>() {
 					@Override
 					public void accept(Throwable throwable) throws Exception {
-//						Log.d("recog1", "onError : " + Thread.currentThread());
+						Log.d("recog3", "onError : " + Thread.currentThread());
 					}
 				}, new Action() {
 					@Override
 					public void run() throws Exception {
-//						Log.d("recog1", "onCompleted : " + Thread.currentThread());
+						Log.d("recog3", "onCompleted : " + Thread.currentThread());
 					}
 				});
 
@@ -756,7 +779,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 											@Override
 											public void onSuccess(FirebaseVisionText firebaseVisionText) {
 //												Log.d("recogizeText success", "recog4 " + firebaseVisionText.getText());
-												completedCount++;
+												synchronized (synchronizedString) {
+													completedCount++;
+												}
 												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState4.onNext(MainActivity.stateReady);
 											}
@@ -766,7 +791,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 													@Override
 													public void onFailure(@NonNull Exception e) {
 //														Log.d("recogizeText fail", "recog1 ");
-														completedCount++;
+														synchronized (synchronizedString) {
+															completedCount++;
+														}
 														Log.d("duration f", "" + completedCount + " : " + (System.currentTimeMillis() - start));
 														recogState4.onNext(MainActivity.stateReady);
 													}
@@ -782,12 +809,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				}, new Consumer<Throwable>() {
 					@Override
 					public void accept(Throwable throwable) throws Exception {
-//						Log.d("recog1", "onError : " + Thread.currentThread());
+						Log.d("recog4", "onError : " + Thread.currentThread());
 					}
 				}, new Action() {
 					@Override
 					public void run() throws Exception {
-//						Log.d("recog1", "onCompleted : " + Thread.currentThread());
+						Log.d("recog4", "onCompleted : " + Thread.currentThread());
 					}
 				});
 
@@ -808,7 +835,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 											@Override
 											public void onSuccess(FirebaseVisionText firebaseVisionText) {
 //												Log.d("recogizeText success", "recog5 " + firebaseVisionText.getText());
-												completedCount++;
+												synchronized (synchronizedString) {
+													completedCount++;
+												}
 												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState5.onNext(MainActivity.stateReady);
 											}
@@ -818,7 +847,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 													@Override
 													public void onFailure(@NonNull Exception e) {
 //														Log.d("recogizeText fail", "recog1 ");
-														completedCount++;
+														synchronized (synchronizedString) {
+															completedCount++;
+														}
 														Log.d("duration f", "" + completedCount + " : " + (System.currentTimeMillis() - start));
 														recogState5.onNext(MainActivity.stateReady);
 													}
@@ -834,12 +865,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				}, new Consumer<Throwable>() {
 					@Override
 					public void accept(Throwable throwable) throws Exception {
-//						Log.d("recog1", "onError : " + Thread.currentThread());
+						Log.d("recog5", "onError : " + Thread.currentThread());
 					}
 				}, new Action() {
 					@Override
 					public void run() throws Exception {
-//						Log.d("recog1", "onCompleted : " + Thread.currentThread());
+						Log.d("recog5", "onCompleted : " + Thread.currentThread());
 					}
 				});
 
@@ -860,7 +891,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 											@Override
 											public void onSuccess(FirebaseVisionText firebaseVisionText) {
 //												Log.d("recogizeText success", "recog6 " + firebaseVisionText.getText());
-												completedCount++;
+												synchronized (synchronizedString) {
+													completedCount++;
+												}
 												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState6.onNext(MainActivity.stateReady);
 											}
@@ -870,7 +903,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 													@Override
 													public void onFailure(@NonNull Exception e) {
 //														Log.d("recogizeText fail", "recog1 ");
-														completedCount++;
+														synchronized (synchronizedString) {
+															completedCount++;
+														}
 														Log.d("duration f", "" + completedCount + " : " + (System.currentTimeMillis() - start));
 														recogState6.onNext(MainActivity.stateReady);
 													}
@@ -886,12 +921,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				}, new Consumer<Throwable>() {
 					@Override
 					public void accept(Throwable throwable) throws Exception {
-//						Log.d("recog1", "onError : " + Thread.currentThread());
+						Log.d("recog6", "onError : " + Thread.currentThread());
 					}
 				}, new Action() {
 					@Override
 					public void run() throws Exception {
-//						Log.d("recog1", "onCompleted : " + Thread.currentThread());
+						Log.d("recog6", "onCompleted : " + Thread.currentThread());
 					}
 				});
 
@@ -912,7 +947,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 											@Override
 											public void onSuccess(FirebaseVisionText firebaseVisionText) {
 //												Log.d("recogizeText success", "recog7 " + firebaseVisionText.getText());
-												completedCount++;
+												synchronized (synchronizedString) {
+													completedCount++;
+												}
 												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState7.onNext(MainActivity.stateReady);
 											}
@@ -922,7 +959,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 													@Override
 													public void onFailure(@NonNull Exception e) {
 //														Log.d("recogizeText fail", "recog1 ");
-														completedCount++;
+														synchronized (synchronizedString) {
+															completedCount++;
+														}
 														Log.d("duration f", "" + completedCount + " : " + (System.currentTimeMillis() - start));
 														recogState7.onNext(MainActivity.stateReady);
 													}
@@ -938,12 +977,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				}, new Consumer<Throwable>() {
 					@Override
 					public void accept(Throwable throwable) throws Exception {
-//						Log.d("recog1", "onError : " + Thread.currentThread());
+						Log.d("recog7", "onError : " + Thread.currentThread());
 					}
 				}, new Action() {
 					@Override
 					public void run() throws Exception {
-//						Log.d("recog1", "onCompleted : " + Thread.currentThread());
+						Log.d("recog7", "onCompleted : " + Thread.currentThread());
 					}
 				});
 
@@ -994,12 +1033,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		}, new Consumer<Throwable>() {
 			@Override
 			public void accept(Throwable throwable) throws Exception {
-//				Log.d("recogLoaderBalancer", "onError : " + Thread.currentThread());
+				Log.d("recogLoaderBalancer", "onError : " + Thread.currentThread());
 			}
 		}, new Action() {
 			@Override
 			public void run() throws Exception {
-//				Log.d("recogLoaderBalancer", "onCompleted : " + Thread.currentThread());
+				Log.d("recogLoaderBalancer", "onCompleted : " + Thread.currentThread());
 			}
 		});
 
@@ -1086,16 +1125,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 								}
 							}
 						}
+						if (fileCount == completedCount) {
+							bitmapQueueState.onComplete();
+							recogLoaderBalancer.onComplete();
+
+							recogState0.onComplete();
+							recogState1.onComplete();
+							recogState2.onComplete();
+							recogState3.onComplete();
+							recogState4.onComplete();
+							recogState5.onComplete();
+							recogState6.onComplete();
+							recogState7.onComplete();
+							recog0.onComplete();
+							recog1.onComplete();
+							recog2.onComplete();
+							recog3.onComplete();
+							recog4.onComplete();
+							recog5.onComplete();
+							recog6.onComplete();
+							recog7.onComplete();
+
+							loaderState0.onComplete();
+							loaderState1.onComplete();
+							loaderState2.onComplete();
+							loaderState3.onComplete();
+							loaderState4.onComplete();
+							loaderState5.onComplete();
+							loaderState6.onComplete();
+							loaderState7.onComplete();
+							loader0.onComplete();
+							loader1.onComplete();
+							loader2.onComplete();
+							loader3.onComplete();
+							loader4.onComplete();
+							loader5.onComplete();
+							loader6.onComplete();
+							loader7.onComplete();
+
+							bitmapLoaderBalancer.onComplete();
+						}
 					}
 				}, new Consumer<Throwable>() {
 					@Override
 					public void accept(Throwable throwable) throws Exception {
-//						Log.d("combineLatest", "recog onError : " + Thread.currentThread());
+						Log.d("combineLatest", "recog onError : " + Thread.currentThread());
 					}
 				}, new Action() {
 					@Override
 					public void run() throws Exception {
-//						Log.d("combineLatest", "recog onCompleted : " + Thread.currentThread());
+						Log.d("combineLatest", "recog onCompleted : " + Thread.currentThread());
 					}
 				});
 
@@ -1150,13 +1229,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				}, new Consumer<Throwable>() {
 					@Override
 					public void accept(Throwable throwable) throws Exception {
-//						Log.d("combineLatest", "onError : " + Thread.currentThread());
+						Log.d("combineLatest", "onError : " + Thread.currentThread());
 //						System.out.println(throwable);
 					}
 				}, new Action() {
 					@Override
 					public void run() throws Exception {
-//						Log.d("combineLatest", "onCompleted : " + Thread.currentThread());
+						Log.d("combineLatest", "onCompleted : " + Thread.currentThread());
 					}
 				});
 
