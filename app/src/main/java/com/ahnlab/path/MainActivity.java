@@ -7,9 +7,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
+//import android.media.ExifInterface;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+//import android.support.media.ExifInterface;
+import android.support.media.ExifInterface;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +35,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+//import androidx.exifinterface.media.ExifInterface;
 import io.reactivex.*;
 import io.reactivex.functions.*;
 import io.reactivex.schedulers.Schedulers;
@@ -558,7 +561,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 												synchronized (synchronizedString) {
 													completedCount++;
 												}
-												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
+//												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState0.onNext(MainActivity.stateReady);
 											}
 										})
@@ -614,7 +617,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 												synchronized (synchronizedString) {
 													completedCount++;
 												}
-												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
+//												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState1.onNext(MainActivity.stateReady);
 											}
 										})
@@ -670,7 +673,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 												synchronized (synchronizedString) {
 													completedCount++;
 												}
-												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
+//												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState2.onNext(MainActivity.stateReady);
 											}
 										})
@@ -726,7 +729,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 												synchronized (synchronizedString) {
 													completedCount++;
 												}
-												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
+//												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState3.onNext(MainActivity.stateReady);
 											}
 										})
@@ -782,7 +785,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 												synchronized (synchronizedString) {
 													completedCount++;
 												}
-												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
+//												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState4.onNext(MainActivity.stateReady);
 											}
 										})
@@ -838,7 +841,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 												synchronized (synchronizedString) {
 													completedCount++;
 												}
-												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
+//												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState5.onNext(MainActivity.stateReady);
 											}
 										})
@@ -894,7 +897,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 												synchronized (synchronizedString) {
 													completedCount++;
 												}
-												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
+//												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState6.onNext(MainActivity.stateReady);
 											}
 										})
@@ -950,7 +953,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 												synchronized (synchronizedString) {
 													completedCount++;
 												}
-												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
+//												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState7.onNext(MainActivity.stateReady);
 											}
 										})
@@ -1175,6 +1178,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 					@Override
 					public void run() throws Exception {
 						Log.d("combineLatest", "recog onCompleted : " + Thread.currentThread());
+						Log.d("duration", " " + completedCount + " : " + (System.currentTimeMillis() - start));
 					}
 				});
 
