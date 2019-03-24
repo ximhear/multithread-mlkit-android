@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -27,6 +29,7 @@ import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,15 +115,58 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	    }
     }
 
-    public Bitmap loadBitmap(String filePath) {
-//    	long start = System.currentTimeMillis();
-		Log.d("loadbitmap", filePath);
+	public static Bitmap modifyOrientation(Bitmap bitmap, String image_absolute_path) throws IOException {
+		ExifInterface ei = new ExifInterface(image_absolute_path);
+		int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+		switch (orientation) {
+			case ExifInterface.ORIENTATION_ROTATE_90:
+				return rotate(bitmap, 90);
+
+			case ExifInterface.ORIENTATION_ROTATE_180:
+				return rotate(bitmap, 180);
+
+			case ExifInterface.ORIENTATION_ROTATE_270:
+				return rotate(bitmap, 270);
+
+			case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+				return flip(bitmap, true, false);
+
+			case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+				return flip(bitmap, false, true);
+
+			default:
+				return bitmap;
+		}
+	}
+
+	public static Bitmap rotate(Bitmap bitmap, float degrees) {
+		Matrix matrix = new Matrix();
+		matrix.postRotate(degrees);
+		return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+	}
+
+	public static Bitmap flip(Bitmap bitmap, boolean horizontal, boolean vertical) {
+		Matrix matrix = new Matrix();
+		matrix.preScale(horizontal ? -1 : 1, vertical ? -1 : 1);
+		return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+	}
+
+
+	public Bitmap loadBitmap(String filePath) {
+    	long start = System.currentTimeMillis();
+//		Log.d("loadbitmap", filePath);
 		File imageFile = new File(filePath);
 		BitmapFactory.Options options = getBitmapSubSampleOptions(imageFile);
 		Bitmap bitmap = BitmapFactory.decodeFile(filePath, options);
-//		Bitmap bitmap = BitmapFactory.decodeFile(filePath);
 //		Log.d("duration", filePath + " : " + (System.currentTimeMillis() - start));
-		return bitmap;
+		try {
+			Bitmap b = MainActivity.modifyOrientation(bitmap, filePath);
+//			Log.d("duration", filePath + " : " + (System.currentTimeMillis() - start));
+			return b;
+		} catch(IOException e) {
+			return bitmap;
+		}
 	}
 
 //	public void recogize(Bitmap bitmap) {
@@ -185,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 					@Override
 					public void accept(String filePath) throws Exception {
 //						Log.d("loader0", "onNext : " + Thread.currentThread());
-						Log.d("loader0", "onNext : " + filePath);
+//						Log.d("loader0", "onNext : " + filePath);
 
 						Bitmap bitmap = loadBitmap(filePath);
 						if (bitmap != null) {
@@ -217,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 					@Override
 					public void accept(String filePath) throws Exception {
 //						Log.d("loader1", "onNext : " + Thread.currentThread());
-						Log.d("loader1", "onNext : " + filePath);
+//						Log.d("loader1", "onNext : " + filePath);
 						Bitmap bitmap = loadBitmap(filePath);
 						if (bitmap != null) {
 							synchronized (bitmaps) {
@@ -247,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 					@Override
 					public void accept(String filePath) throws Exception {
 //						Log.d("loader2", "onNext : " + Thread.currentThread());
-						Log.d("loader2", "onNext : " + filePath);
+//						Log.d("loader2", "onNext : " + filePath);
 						Bitmap bitmap = loadBitmap(filePath);
 						if (bitmap != null) {
 							synchronized (bitmaps) {
@@ -277,7 +323,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 					@Override
 					public void accept(String filePath) throws Exception {
 //						Log.d("loader3", "onNext : " + Thread.currentThread());
-						Log.d("loader3", "onNext : " + filePath);
+//						Log.d("loader3", "onNext : " + filePath);
 						Bitmap bitmap = loadBitmap(filePath);
 						if (bitmap != null) {
 							synchronized (bitmaps) {
@@ -307,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 					@Override
 					public void accept(String filePath) throws Exception {
 //						Log.d("loader3", "onNext : " + Thread.currentThread());
-						Log.d("loader4", "onNext : " + filePath);
+//						Log.d("loader4", "onNext : " + filePath);
 						Bitmap bitmap = loadBitmap(filePath);
 						if (bitmap != null) {
 							synchronized (bitmaps) {
@@ -337,7 +383,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 					@Override
 					public void accept(String filePath) throws Exception {
 //						Log.d("loader3", "onNext : " + Thread.currentThread());
-						Log.d("loader5", "onNext : " + filePath);
+//						Log.d("loader5", "onNext : " + filePath);
 						Bitmap bitmap = loadBitmap(filePath);
 						if (bitmap != null) {
 							synchronized (bitmaps) {
@@ -367,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 					@Override
 					public void accept(String filePath) throws Exception {
 //						Log.d("loader3", "onNext : " + Thread.currentThread());
-						Log.d("loader6", "onNext : " + filePath);
+//						Log.d("loader6", "onNext : " + filePath);
 						Bitmap bitmap = loadBitmap(filePath);
 						if (bitmap != null) {
 							synchronized (bitmaps) {
@@ -397,7 +443,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 					@Override
 					public void accept(String filePath) throws Exception {
 //						Log.d("loader3", "onNext : " + Thread.currentThread());
-						Log.d("loader7", "onNext : " + filePath);
+//						Log.d("loader7", "onNext : " + filePath);
 						Bitmap bitmap = loadBitmap(filePath);
 						if (bitmap != null) {
 							synchronized (bitmaps) {
@@ -605,7 +651,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 										.addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
 											@Override
 											public void onSuccess(FirebaseVisionText firebaseVisionText) {
-//												Log.d("recogizeText success", "recog1 " + firebaseVisionText.getText());
+//												Log.d("recogizeText success", "recog2 " + firebaseVisionText.getText());
 												completedCount++;
 												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState2.onNext(MainActivity.stateReady);
@@ -657,7 +703,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 										.addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
 											@Override
 											public void onSuccess(FirebaseVisionText firebaseVisionText) {
-//												Log.d("recogizeText success", "recog1 " + firebaseVisionText.getText());
+//												Log.d("recogizeText success", "recog3 " + firebaseVisionText.getText());
 												completedCount++;
 												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState3.onNext(MainActivity.stateReady);
@@ -709,7 +755,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 										.addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
 											@Override
 											public void onSuccess(FirebaseVisionText firebaseVisionText) {
-//												Log.d("recogizeText success", "recog1 " + firebaseVisionText.getText());
+//												Log.d("recogizeText success", "recog4 " + firebaseVisionText.getText());
 												completedCount++;
 												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState4.onNext(MainActivity.stateReady);
@@ -761,7 +807,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 										.addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
 											@Override
 											public void onSuccess(FirebaseVisionText firebaseVisionText) {
-//												Log.d("recogizeText success", "recog1 " + firebaseVisionText.getText());
+//												Log.d("recogizeText success", "recog5 " + firebaseVisionText.getText());
 												completedCount++;
 												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState5.onNext(MainActivity.stateReady);
@@ -813,7 +859,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 										.addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
 											@Override
 											public void onSuccess(FirebaseVisionText firebaseVisionText) {
-//												Log.d("recogizeText success", "recog1 " + firebaseVisionText.getText());
+//												Log.d("recogizeText success", "recog6 " + firebaseVisionText.getText());
 												completedCount++;
 												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState6.onNext(MainActivity.stateReady);
@@ -865,7 +911,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 										.addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
 											@Override
 											public void onSuccess(FirebaseVisionText firebaseVisionText) {
-//												Log.d("recogizeText success", "recog1 " + firebaseVisionText.getText());
+//												Log.d("recogizeText success", "recog7 " + firebaseVisionText.getText());
 												completedCount++;
 												Log.d("duration s", str + " " + completedCount + " : " + (System.currentTimeMillis() - start));
 												recogState7.onNext(MainActivity.stateReady);
@@ -882,7 +928,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 													}
 												})
 										.addOnCompleteListener(new OnCompleteListener<FirebaseVisionText>() {
-											@Override:wq
+											@Override
 											public void onComplete(@NonNull Task<FirebaseVisionText> task) {
 //												Log.d("recogizeText complete", "recog1 ");
 //												Log.d("duration", "" + (System.currentTimeMillis() - start));
